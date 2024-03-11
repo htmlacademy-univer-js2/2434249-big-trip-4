@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import {createElement} from '../render.js';
 
 const createTipEventListViewTemplate = () => '<ul class="trip-events__list"></ul>';
 
