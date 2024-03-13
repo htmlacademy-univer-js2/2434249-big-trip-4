@@ -45,10 +45,10 @@ export default class MockService {
       const hasOffers = getRandomBulValue();
       const offersByType = this.offers.find((offerByType) => offerByType.type === type);
       const offerIds = (hasOffers)
-        ? offersByType.offers.slice(getRandomIntFromRange(0, offersByType.offers.length))
+        ? offersByType.offers.map((offer) => offer.offers.id)
         : [];
 
-      return generatePoint(type, destination, offerIds);
+      return generatePoint(type, destination.id, offerIds);
     });
   }
 }

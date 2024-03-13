@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 import {formatToSlashDate} from '../utils.js';
-import {POINT_EMPTY} from '../mock/const.js';
+import {POINT_EMPTY, ROUTE_TYPE} from '../mock/const.js';
 
 const getPicrtureArrayElement = (picturesArray) => {
   let tapeElements = '';
@@ -43,16 +43,16 @@ const getEventTypeElements = (typeArray) => {
 
   typeArray.forEach((type) => {
     typeElements += `<div class="event__type-item">
-    <input id="event-type-${type.type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.type.toLowerCase()}">
-    <label class="event__type-label  event__type-label--${type.type.toLowerCase()}" for="event-type-${type.type.toLowerCase()}-1">${type.type}</label>
+    <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}">
+    <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
   </div>`;
   });
 
   return typeElements;
 };
 
-const createNewPointTemplate = ({point, pointOffers}) => {
-  const {basePrice, dateFrom, dateTo, offers, type} = point;
+const createNewPointTemplate = ({point, pointDestination, pointOffers}) => {
+  const {basePrice, dateFrom, dateTo, type} = point;
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -67,7 +67,7 @@ const createNewPointTemplate = ({point, pointOffers}) => {
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-            ${getEventTypeElements(pointOffers)}
+              ${getEventTypeElements(ROUTE_TYPE)}
           </fieldset>
         </div>
       </div>
@@ -76,7 +76,7 @@ const createNewPointTemplate = ({point, pointOffers}) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -104,14 +104,14 @@ const createNewPointTemplate = ({point, pointOffers}) => {
       <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
     <section class="event__details">
-          ${getOffersArrayElement(offers)}
+          ${getOffersArrayElement(pointOffers)}
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${point.destination.description}</p>
+        <p class="event__destination-description">${pointDestination.description}</p>
 
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${getPicrtureArrayElement(point.destination.pictures)}
+            ${getPicrtureArrayElement(pointDestination.pictures)}
           </div>
         </div>
       </section>

@@ -1,11 +1,13 @@
 import dayjs from 'dayjs';
-import {DATE_FORMAT, TIME_FORMAT, FULL_TIME_FOMAT, MILLISECONDS_IN_DAY, MILLISECONDS_IN_HOUR, BooleanValues, SLASH_TIME_FOMAT} from './mock/const';
+import {DAY_FOMAT, DATE_FORMAT, TIME_FORMAT, FULL_TIME_FOMAT, MILLISECONDS_IN_DAY, MILLISECONDS_IN_HOUR, BooleanValues, SLASH_TIME_FOMAT} from './mock/const';
 
 // eslint-disable-next-line no-undef
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
 
 export const formatToDate = (dueDate) => dueDate ? dayjs(dueDate).format(FULL_TIME_FOMAT) : '';
+
+export const formatToDay = (dueDate) => dueDate ? dayjs(dueDate).format(DAY_FOMAT) : '';
 
 export const formatToTime = (dueDate) => dueDate ? dayjs(dueDate).format(TIME_FORMAT) : '';
 
@@ -39,5 +41,29 @@ export const getRandomPictureElement = (city) => ({
   src: `https://loremflickr.com/248/152?random=${getRandomInt()}`,
   description: `${city} description`
 });
+
+export const Duration = {
+  MIN: 60,
+  HOUR: 10,
+  DAY: 3
+};
+
+export const getDate = (add) => {
+  let date = dayjs().subtract(getRandomIntFromRange(0, Duration.DAY), 'day').toDate();
+
+  const mins = getRandomIntFromRange(0, Duration.MIN);
+  const hours = getRandomIntFromRange(0, Duration.HOUR);
+  const days = getRandomIntFromRange(0, Duration.DAY);
+
+  if (add) {
+    date = dayjs(date)
+      .add(mins, 'minute')
+      .add(hours, 'hour')
+      .add(days, 'days')
+      .toDate();
+  }
+
+  return date;
+};
 
 export const getPicturesArray = (city) => Array.from({length: getRandomIntFromRange(0, 5)}, () => getRandomPictureElement(city));

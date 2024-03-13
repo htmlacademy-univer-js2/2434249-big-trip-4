@@ -23,8 +23,8 @@ const offerShow = (offersArray) => {
   return '';
 };
 
-const createEventPointTemplate = ({point, pointOffers}) => {
-  const {basePrice, dateFrom, dateTo, isFavorite, type, destination} = point;
+const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
+  const {basePrice, dateFrom, dateTo, isFavorite, type} = point;
 
   return (`<li class="trip-events__item">
   <div class="event">
@@ -32,7 +32,7 @@ const createEventPointTemplate = ({point, pointOffers}) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
     </div>
-    <h3 class="event__title">${type} ${destination.name}</h3>
+    <h3 class="event__title">${type} ${pointDestination.name}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime=${formatToDate(dateFrom)}">${formatToTime(dateFrom)}</time>
@@ -60,6 +60,7 @@ const createEventPointTemplate = ({point, pointOffers}) => {
   </div>
 </li>`);
 };
+
 export default class EventPointView {
   constructor({point = POINT_EMPTY, pointDestination, pointOffers}) {
     this.point = point;

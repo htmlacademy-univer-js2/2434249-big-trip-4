@@ -1,5 +1,6 @@
 export const DATE_FORMAT = 'MMM D';
 export const TIME_FORMAT = 'HH:mm';
+export const DAY_FOMAT = 'D';
 export const FULL_TIME_FOMAT = 'YYYY-MM-DDTHH:mm';
 export const SLASH_TIME_FOMAT = 'DD/MM/YY HH:mm';
 export const MILLISECONDS_IN_DAY = 86400000;

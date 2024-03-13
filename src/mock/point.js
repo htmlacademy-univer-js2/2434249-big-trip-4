@@ -1,12 +1,13 @@
-import {getRandomInt, getRandomBulValue} from '../utils.js';
+import {getRandomInt, getRandomBulValue, getDate} from '../utils.js';
 
 export const generatePoint = (offerType, destinationId, offerIds) => ({
   id: crypto.randomUUID(),
   basePrice: getRandomInt(),
-  dateFrom: '2019-01-10T20:55:56.845Z',
-  dateTo: '2019-01-12T22:55:56.845Z',
+  dateFrom: getDate(false),
+  dateTo: getDate(true),
   destination: destinationId,
   isFavorite: getRandomBulValue(),
   offers: offerIds,
   type: offerType
-});
+}
+);
