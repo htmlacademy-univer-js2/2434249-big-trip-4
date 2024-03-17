@@ -59,7 +59,7 @@ export const ROUTE_TYPE = [
 
 export const CITIES = [
   'Salisbury',
-  'Kingston upon Hull',
+  'Kingston',
   'Ripon',
   'Liverpool',
   'Carlisle',
@@ -67,21 +67,4 @@ export const CITIES = [
   'Manchester',
   'Chelmsford',
   'Carlisle'
-];
-
-export const DATES = [
-  '2019-07-10T22:55:56.845Z',
-  '2019-07-11T22:55:56.845Z',
-  '2019-07-12T22:55:56.845Z',
-  '2019-07-13T22:55:56.845Z',
-  '2019-07-14T22:55:56.845Z'
-];
-
-export const id = [
-  'zpJruf3vmWw-8MUyZPWx',
-  'stg9-c9zrK0pu2n99OUe',
-  'YT-SMjFHc7S_uEnU61Th',
-  '-gDk1GeiUafeZJJQ-dpE',
-  'QqbAXKJ_Couc3bhn-ba8',
-  'bcpicZLm9rLOUZ85Y4M_'
 ];

@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
 import {POINT_EMPTY} from '../mock/const.js';
 import {formatToShortDate, formatToDay} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createDestinationElement = (pointDestination) => {
   let destinationElements = '';
@@ -24,28 +24,20 @@ const createTripInfoTemplate = ({point, pointDestination}) => (`<section class="
     </p>
     </section>`);
 
-export default class TripInfoView {
+export default class TripInfoView extends AbstractView {
+  #point = null;
+  #pointDestination = [];
+
   constructor({point = POINT_EMPTY, pointDestination}) {
-    this.point = point;
-    this.pointDestination = pointDestination;
+    super();
+    this.#point = point;
+    this.#pointDestination = pointDestination;
   }
 
-  getTemplate() {
+  get template() {
     return createTripInfoTemplate({
-      point: this.point,
-      pointDestination: this.pointDestination,
+      point: this.#point,
+      pointDestination: this.#pointDestination,
     });
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
