@@ -38,8 +38,6 @@ const tripPresenterElement = new TripPresenter({
   pointsModel
 });
 
-
-
 tripInfoPresenterElement.init();
 filterPresenterElement.init();
 sortPresenterElement.init();

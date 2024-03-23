@@ -1,7 +1,6 @@
 import {formatToSlashDate} from '../utils.js';
 import {CITIES, POINT_EMPTY, ROUTE_TYPE} from '../mock/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
-import {EMPTY_WARNINGS} from '../mock/const.js';
 
 const getPicrtureItem = (picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
 
