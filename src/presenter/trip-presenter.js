@@ -1,19 +1,17 @@
-import {render, replace} from '../framework/render.js';
-import FilterView from '../view/filter-view.js';
-import SortView from '../view/sort-view.js';
+import {render, replace, remove} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import EventPointView from '../view/event-point-view.js';
 import EventListView from '../view/event-list-view.js';
-import TripInfoView from '../view/trip-info-view.js';
+import AddPointView from '../view/add-point-view.js';
 
-export default class BoardPresenter {
-  #boardContainer = null;
+export default class TripPresenter {
+  #tripContainer = null;
   #destinationsModel = null;
   #offersModel = null;
   #pointsModel = null;
 
-  constructor({boardContainer, destinationsModel, offersModel, pointsModel}) {
-    this.#boardContainer = boardContainer;
+  constructor({tripContainer, destinationsModel, offersModel, pointsModel}) {
+    this.#tripContainer = tripContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#pointsModel = pointsModel;
@@ -23,21 +21,21 @@ export default class BoardPresenter {
 
   init(){
     const points = [...this.#pointsModel.get()];
-    const tripControlFiltersElement = this.#boardContainer.querySelector('.trip-controls__filters');
-    const tripInfoElement = this.#boardContainer.querySelector('.trip-main');
-    const tripEventsElement = this.#boardContainer.querySelector('.trip-events');
+    const tripEventsElement = this.#tripContainer.querySelector('.trip-events');
+    const newEventElement = document.querySelector('.trip-main__event-add-btn');
+    newEventElement.addEventListener('click', () => this.#addPointHandler(newEventElement));
 
-    render(new TripInfoView({
-      point: points,
-      pointDestination: this.#destinationsModel.get().map((destination) => destination.name),
-    }), tripInfoElement, 'afterbegin');
-    render(new FilterView(), tripControlFiltersElement);
-    render(new SortView(), tripEventsElement);
     render(this.#eventList, tripEventsElement);
 
     points.forEach((point) => {
       this.#renderPoints(point);
     });
+  }
+
+  //не снимаются обработчики
+  #addPointHandler(newEventElement) {
+    newEventElement.setAttribute('disabled', '');
+    this.#renderAddPoint(newEventElement);
   }
 
   #renderPoints(point) {
@@ -67,6 +65,10 @@ export default class BoardPresenter {
         replaceFormToPoint();
         document.addEventListener('keydown', escKeyDownHandler);
       },
+      onDeleteClick: () => {
+        remove(eventEditPoint);
+        document.addEventListener('keydown', escKeyDownHandler);
+      },
       onRollUpClick: () => {
         replaceFormToPoint();
         document.addEventListener('keydown', escKeyDownHandler);
@@ -82,5 +84,23 @@ export default class BoardPresenter {
     }
 
     render(eventPoint, this.#eventList.element);
+  }
+
+  #renderAddPoint(newEventElement) {
+    const eventAddPoint = new AddPointView({
+      pointOffers: this.#offersModel,
+      onSaveClick: () => {
+      },
+      onCancelClick: () => {
+        deleteForm();
+      }
+    });
+
+    function deleteForm() {
+      newEventElement.removeAttribute('disabled');
+      remove(eventAddPoint);
+    }
+
+    render(eventAddPoint, this.#eventList.element, 'afterbegin');
   }
 }

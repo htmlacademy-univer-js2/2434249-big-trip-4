@@ -1,4 +1,4 @@
-import {getRandomInt, getRandomBulValue, getDate} from '../utils.js';
+import {getRandomInt, getRandomBulValue, getDate, getRandomArrayElement} from '../utils.js';
 
 export const generatePoint = (offerType, destinationId, offerIds) => ({
   id: crypto.randomUUID(),
@@ -7,7 +7,7 @@ export const generatePoint = (offerType, destinationId, offerIds) => ({
   dateTo: getDate(true),
   destination: destinationId,
   isFavorite: getRandomBulValue(),
-  offers: offerIds,
+  offers: offerIds.map(() => (getRandomArrayElement(offerIds))),
   type: offerType
 }
 );
