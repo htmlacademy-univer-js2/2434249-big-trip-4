@@ -2,25 +2,15 @@ import {formatToTime, formatToDate, formatToShortDate, getPointDuration} from '.
 import {POINT_EMPTY} from '../mock/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-const offerShow = (offersArray) => {
-  if (offersArray.length !== 0) {
-    let offerElements = '';
-
-    offersArray.forEach((offer) => {
-      offerElements += `<li class="event__offer">
-    <span class="event__offer-title">${offer.offers.title}</span>
+const getOfferItem = (offer) => `<li class="event__offer">
+    <span class="event__offer-title">${offer.title}</span>
     +€&nbsp;
-    <span class="event__offer-price">${offer.offers.price}</span>
+    <span class="event__offer-price">${offer.price}</span>
   </li>`;
-    });
-
-    return offerElements;
-  }
-  return '';
-};
 
 const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
   const {basePrice, dateFrom, dateTo, isFavorite, type} = point;
+  const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer)).join('');
 
   return (`<li class="trip-events__item">
   <div class="event">
@@ -38,11 +28,12 @@ const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
       <p class="event__duration">${getPointDuration(dateFrom, dateTo)}</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">${basePrice}</span>
+      €&nbsp;<span class="event__price-value">
+      ${pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offerShow(pointOffers)}
+    ${offerItemsTemplate}
     </ul>
     <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
       <span class="visually-hidden">Add to favorite</span>
@@ -67,7 +58,7 @@ export default class EventPointView extends AbstractView {
     super();
     this.#point = point;
     this.#pointDestination = pointDestination;
-    this.#pointOffers = pointOffers;
+    this.#pointOffers = pointOffers.filter((offer) => point.offers.includes(offer.id));
 
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);

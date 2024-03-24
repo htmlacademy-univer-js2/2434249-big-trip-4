@@ -43,7 +43,7 @@ export default class MockService {
       const type = getRandomArrayElement(ROUTE_TYPE);
       const destination = getRandomArrayElement(this.#destinations);
       const offersByType = this.#offers.find((offerByType) => offerByType.type === type);
-      const offerIds = offersByType.offers.map((offer) => offer.offers.id);
+      const offerIds = offersByType.offers.map((offer) => offer.id);
       return generatePoint(type, destination.id, offerIds);
     });
   }
