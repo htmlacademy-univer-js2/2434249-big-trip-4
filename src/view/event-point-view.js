@@ -28,7 +28,8 @@ const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
       <p class="event__duration">${getPointDuration(dateFrom, dateTo)}</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">${basePrice}</span>
+      €&nbsp;<span class="event__price-value">
+      ${pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

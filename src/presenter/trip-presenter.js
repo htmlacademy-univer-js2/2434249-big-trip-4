@@ -3,6 +3,10 @@ import EditPointView from '../view/edit-point-view.js';
 import EventPointView from '../view/event-point-view.js';
 import EventListView from '../view/event-list-view.js';
 import AddPointView from '../view/add-point-view.js';
+import EmptyListView from '../view/empty-list-view.js';
+import SortView from '../view/sort-view.js';
+import {generateSorter} from '../mock/sort.js';
+import TripInfoView from '../view/trip-info-view.js';
 
 export default class TripPresenter {
   #tripContainer = null;
@@ -21,9 +25,23 @@ export default class TripPresenter {
 
   init(){
     const points = [...this.#pointsModel.get()];
-    const tripEventsElement = this.#tripContainer.querySelector('.trip-events');
+    const tripInfoElement = this.#tripContainer.querySelector('.trip-main');
     const newEventElement = document.querySelector('.trip-main__event-add-btn');
+    const tripEventsElement = this.#tripContainer.querySelector('.trip-events');
+
+    if (this.#pointsModel.get().length === 0) {
+      render(new EmptyListView(), tripEventsElement);
+      return;
+    }
+
     newEventElement.addEventListener('click', () => this.#addPointHandler(newEventElement));
+    const sorter = generateSorter(points);
+
+    render(new TripInfoView({
+      points: points,
+      pointDestination: this.#destinationsModel.get(),
+    }), tripInfoElement, 'afterbegin');
+    render(new SortView({sorter}), tripEventsElement);
 
     render(this.#eventList, tripEventsElement);
 
