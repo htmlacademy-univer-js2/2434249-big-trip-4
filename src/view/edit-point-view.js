@@ -29,7 +29,6 @@ const createEditPointTemplate = ({point, pointDestination, pointOffers}) => {
   const cityItemsTemplate = CITIES.map((cityItem) => getDestinationItem(cityItem)).join('');
   const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer, point.offers)).join('');
 
-  //подсчёт стоимости неправильный, надо исправть...
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -72,7 +71,10 @@ const createEditPointTemplate = ({point, pointDestination, pointOffers}) => {
         €
       </label>
       <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="
-      ${pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice}">
+      ${pointOffers
+    .filter((offer) => point.offers.includes(offer.id))
+    .map((offer) => offer.price)
+    .reduce((sum, x) => sum + x, 0) + basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

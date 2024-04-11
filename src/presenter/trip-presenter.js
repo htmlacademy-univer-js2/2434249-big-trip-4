@@ -22,6 +22,7 @@ export default class TripPresenter {
   }
 
   #eventList = new EventListView();
+  #emptyList = new EmptyListView();
 
   init(){
     const points = [...this.#pointsModel.get()];
@@ -40,6 +41,7 @@ export default class TripPresenter {
     render(new TripInfoView({
       points: points,
       pointDestination: this.#destinationsModel.get(),
+      pointOffers: this.#offersModel.get(),
     }), tripInfoElement, 'afterbegin');
     render(new SortView({sorter}), tripEventsElement);
 
@@ -84,6 +86,9 @@ export default class TripPresenter {
         document.addEventListener('keydown', escKeyDownHandler);
       },
       onDeleteClick: () => {
+        if (document.querySelectorAll('.trip-events__item').length - 1 === 0) {
+          render(this.#emptyList, this.#tripContainer.querySelector('.trip-events'));
+        }
         remove(eventEditPoint);
         document.addEventListener('keydown', escKeyDownHandler);
       },
@@ -105,17 +110,23 @@ export default class TripPresenter {
   }
 
   #renderAddPoint(newEventElement) {
+    if (document.querySelectorAll('.trip-events__item').length - 1 !== 0) {
+      remove(this.#emptyList);
+    }
     const eventAddPoint = new AddPointView({
       pointOffers: this.#offersModel,
       onSaveClick: () => {
       },
       onCancelClick: () => {
-        deleteForm();
+        deleteForm(this.#emptyList);
       }
     });
 
-    function deleteForm() {
+    function deleteForm(emptyList) {
       newEventElement.removeAttribute('disabled');
+      if (document.querySelectorAll('.trip-events__item').length - 1 === 0) {
+        render(emptyList, document.querySelector('.trip-events'));
+      }
       remove(eventAddPoint);
     }
 

@@ -21,12 +21,22 @@ const createFilterTemplate = (filterItems) => {
 
 export default class FilterView extends AbstractView{
   #filters = null;
-  constructor({filters}) {
+  #handleFilterClick = null;
+  constructor({filters, onFilterClick}) {
     super();
     this.#filters = filters;
+    this.#handleFilterClick = onFilterClick;
+
+    this.element.querySelectorAll('.trip-filters__filter')
+      .forEach((filterElement) => filterElement.addEventListener('click', this.#filterClickHandler));
   }
 
   get template() {
     return createFilterTemplate(this.#filters);
   }
+
+  #filterClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterClick(evt.target.innerHTML);
+  };
 }

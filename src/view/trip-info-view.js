@@ -5,11 +5,15 @@ import AbstractView from '../framework/view/abstract-view.js';
 const findDestinationForPoint = (point, pointDestination) =>
   pointDestination.find((destination) => destination.id === point.destination);
 
+const findOffersForPoint = (point, pointOffers) =>
+  pointOffers.find((offer) => offer.type === point.type);
+
 const createDestinationElement = (pointDestination) =>
   pointDestination.length <= 3
     ? pointDestination.map((destination) => (`${destination} - `)).join('').slice(0, -2)
     : `${pointDestination[0]} - ... - ${pointDestination[pointDestination.length - 1]}`;
 
+//общую стоимость считает не правитьно, пока не знаю, как исправить
 const createTripInfoTemplate = ({points, pointDestination}) => (`<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${createDestinationElement(pointDestination)}</h1>
@@ -26,13 +30,17 @@ const createTripInfoTemplate = ({points, pointDestination}) => (`<section class=
 export default class TripInfoView extends AbstractView {
   #points = null;
   #pointDestination = [];
+  #pointOffers = [];
 
-  constructor({points = POINT_EMPTY, pointDestination}) {
+  constructor({points = POINT_EMPTY, pointDestination, pointOffers}) {
     super();
     this.#points = points;
     this.#pointDestination = points
       .map((point) => findDestinationForPoint(point, pointDestination))
       .map((destination) => destination.name);
+    this.#pointOffers = points
+      .map((point) => findOffersForPoint(point, pointOffers))
+      .map((offer) => offer.offers);
   }
 
   get template() {
