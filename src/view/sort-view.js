@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {generateSorter} from '../mock/sort.js';
 
 const createSortItemTemplate = (sorter, isChecked) => {
   const {type} = sorter;
@@ -11,22 +12,24 @@ const createSortItemTemplate = (sorter, isChecked) => {
 </div>`);
 };
 
-const createSortTemplate = () => {
-  // const sorterItemsTemplate = sorterItems.map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
+const createSortTemplate = (sort) => {
+  const sorterItemsTemplate = sort.map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
 
   return (`<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-${'Сортировка пока отключена'}
+${sorterItemsTemplate}
 </form>`);};
 
 export default class SortView extends AbstractView {
   #sorter = null;
+  #points = [];
 
-  constructor() {
+  constructor({points}) {
     super();
-    // this.#sorter = sorter;
+    this.#points = points;
   }
 
   get template() {
-    return createSortTemplate();
+    const sort = generateSorter(this.#points);
+    return createSortTemplate(sort);
   }
 }

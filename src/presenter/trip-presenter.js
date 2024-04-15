@@ -28,11 +28,14 @@ export default class TripPresenter {
     this.#newEventElement = document.querySelector('.trip-main__event-add-btn');
   }
 
+  #sortComponent = null;
   #eventList = new EventListView();
-  #sortComponent = new SortView();
   #noPointComponent = new NoPointView();
 
   init(){
+    this.#sortComponent = new SortView({
+      points: this.#pointsModel.get()
+    });
     this.#points = [...this.#pointsModel.get()];
 
     if (this.#points.length === 0) {
