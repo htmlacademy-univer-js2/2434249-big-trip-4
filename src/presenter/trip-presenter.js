@@ -1,55 +1,50 @@
-import {render, replace, remove} from '../framework/render.js';
-import EditPointView from '../view/edit-point-view.js';
-import EventPointView from '../view/event-point-view.js';
+import {render, remove} from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import AddPointView from '../view/add-point-view.js';
-import EmptyListView from '../view/empty-list-view.js';
+import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
-import {generateSorter} from '../mock/sort.js';
+import PointPresenter from './point-presenter.js';
 import TripInfoView from '../view/trip-info-view.js';
+import {updateItem} from '../utils.js';
 
 export default class TripPresenter {
   #tripContainer = null;
   #destinationsModel = null;
   #offersModel = null;
   #pointsModel = null;
+  #tripEventsElement = null;
+  #tripInfoElement = null;
+  #points = [];
+  #newEventElement = null;
+  #pointPresenterArray = new Map();
 
   constructor({tripContainer, destinationsModel, offersModel, pointsModel}) {
     this.#tripContainer = tripContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#pointsModel = pointsModel;
+    this.#tripEventsElement = this.#tripContainer.querySelector('.trip-events');
+    this.#tripInfoElement = this.#tripContainer.querySelector('.trip-main');
+    this.#newEventElement = document.querySelector('.trip-main__event-add-btn');
   }
 
   #eventList = new EventListView();
-  #emptyList = new EmptyListView();
+  #sortComponent = new SortView();
+  #noPointComponent = new NoPointView();
 
   init(){
-    const points = [...this.#pointsModel.get()];
-    const tripInfoElement = this.#tripContainer.querySelector('.trip-main');
-    const newEventElement = document.querySelector('.trip-main__event-add-btn');
-    const tripEventsElement = this.#tripContainer.querySelector('.trip-events');
+    this.#points = [...this.#pointsModel.get()];
 
-    if (this.#pointsModel.get().length === 0) {
-      render(new EmptyListView(), tripEventsElement);
+    if (this.#points.length === 0) {
+      this.#renderNoPointComponent();
       return;
     }
 
-    newEventElement.addEventListener('click', () => this.#addPointHandler(newEventElement));
-    const sorter = generateSorter(points);
+    this.#newEventElement.addEventListener('click', () => this.#addPointHandler(this.#newEventElement));
 
-    render(new TripInfoView({
-      points: points,
-      pointDestination: this.#destinationsModel.get(),
-      pointOffers: this.#offersModel.get(),
-    }), tripInfoElement, 'afterbegin');
-    render(new SortView({sorter}), tripEventsElement);
-
-    render(this.#eventList, tripEventsElement);
-
-    points.forEach((point) => {
-      this.#renderPoints(point);
-    });
+    this.#renderTripInfo();
+    this.#renderSort();
+    this.#renderPoints();
   }
 
   //не снимаются обработчики
@@ -58,67 +53,75 @@ export default class TripPresenter {
     this.#renderAddPoint(newEventElement);
   }
 
-  #renderPoints(point) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenterArray.get(updatedPoint.id).init(updatedPoint);
+  };
 
-    const eventPoint = new EventPointView({
-      point: point,
-      pointDestination: this.#destinationsModel.getById(point.destination),
-      pointOffers: this.#offersModel.getByType(point.type),
-      onEditClick: () => {
-        replacePointToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+  #handleModeChange = () => {
+    this.#pointPresenterArray.forEach((presenter) => presenter.resetView());
+  };
+
+  #renderTripInfo() {
+    render(new TripInfoView({
+      points: this.#points,
+      pointDestination: this.#destinationsModel.get(),
+      pointOffers: this.#offersModel.get(),
+    }), this.#tripInfoElement, 'afterbegin');
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#tripEventsElement);
+  }
+
+  #renderNoPointComponent() {
+    render(this.#noPointComponent, this.#tripEventsElement);
+    remove(this.#sortComponent);
+    remove(this.#eventList);
+  }
+
+  #destroyNoPointComponent() {
+    remove(this.#noPointComponent);
+    render(this.#sortComponent, this.#tripEventsElement);
+    render(this.#eventList, this.#tripEventsElement);
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      eventList: this.#eventList,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
 
-    const eventEditPoint = new EditPointView({
-      point: point,
-      pointDestination: this.#destinationsModel.getById(point.destination),
-      pointOffers: this.#offersModel.getByType(point.type),
-      onSubmitClick: () => {
-        replaceFormToPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
-      },
-      onDeleteClick: () => {
-        if (document.querySelectorAll('.trip-events__item').length - 1 === 0) {
-          render(this.#emptyList, this.#tripContainer.querySelector('.trip-events'));
-        }
-        remove(eventEditPoint);
-        document.addEventListener('keydown', escKeyDownHandler);
-      },
-      onRollUpClick: () => {
-        replaceFormToPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    pointPresenter.init(point);
+    this.#pointPresenterArray.set(point.id, pointPresenter);
+  }
+
+  #renderPoints() {
+    render(this.#eventList, this.#tripEventsElement);
+
+    this.#points.forEach((point) => {
+      this.#renderPoint(point);
     });
+  }
 
-    function replacePointToForm() {
-      replace(eventEditPoint, eventPoint);
-    }
-
-    function replaceFormToPoint() {
-      replace(eventPoint, eventEditPoint);
-    }
-
-    render(eventPoint, this.#eventList.element);
+  #clearPointList() {
+    this.#pointPresenterArray.forEach((presenter) => presenter.destroy());
+    this.#pointPresenterArray.clear();
   }
 
   #renderAddPoint(newEventElement) {
     if (document.querySelectorAll('.trip-events__item').length - 1 !== 0) {
-      remove(this.#emptyList);
+      this.#destroyNoPointComponent();
     }
     const eventAddPoint = new AddPointView({
       pointOffers: this.#offersModel,
       onSaveClick: () => {
       },
       onCancelClick: () => {
-        deleteForm(this.#emptyList);
+        deleteForm(this.#noPointComponent);
       }
     });
 

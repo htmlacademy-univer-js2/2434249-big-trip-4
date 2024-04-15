@@ -11,22 +11,22 @@ const createSortItemTemplate = (sorter, isChecked) => {
 </div>`);
 };
 
-const createSortTemplate = (sorterItems) => {
-  const sorterItemsTemplate = sorterItems.map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
+const createSortTemplate = () => {
+  // const sorterItemsTemplate = sorterItems.map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
 
   return (`<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-${sorterItemsTemplate}
+${'Сортировка пока отключена'}
 </form>`);};
 
 export default class SortView extends AbstractView {
   #sorter = null;
 
-  constructor({sorter}) {
+  constructor() {
     super();
-    this.#sorter = sorter;
+    // this.#sorter = sorter;
   }
 
   get template() {
-    return createSortTemplate(this.#sorter);
+    return createSortTemplate();
   }
 }
