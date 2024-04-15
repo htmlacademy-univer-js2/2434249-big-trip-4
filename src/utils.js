@@ -38,7 +38,7 @@ export const getPointDuration = (dateFrom, dateTo) => {
 };
 
 export const getRandomPictureElement = (city) => ({
-  src: `https://loremflickr.com/248/152?random=${getRandomInt()}`,
+  src: `https://loremflickr.com/320/240/dog?random=${getRandomInt()}`,
   description: `${city} description`
 });
 
@@ -67,3 +67,5 @@ export const getDate = (add) => {
 };
 
 export const getPicturesArray = (city) => Array.from({length: getRandomIntFromRange(0, 5)}, () => getRandomPictureElement(city));
+
+export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);

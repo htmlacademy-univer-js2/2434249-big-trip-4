@@ -13,7 +13,7 @@ const createDestinationElement = (pointDestination) =>
     ? pointDestination.map((destination) => (`${destination} - `)).join('').slice(0, -2)
     : `${pointDestination[0]} - ... - ${pointDestination[pointDestination.length - 1]}`;
 
-//общую стоимость считает не правитьно, пока не знаю, как исправить
+//общую стоимость считает не правильно, пока не знаю, как исправить
 const createTripInfoTemplate = ({points, pointDestination}) => (`<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${createDestinationElement(pointDestination)}</h1>

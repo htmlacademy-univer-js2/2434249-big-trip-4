@@ -125,7 +125,7 @@ export default class EditPointView extends AbstractView{
     this.#handleDeleteClick = onDeleteClick;
     this.#handleRollUpClick = onRollUpClick;
 
-    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#submitClickHandler);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitClickHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpClickHandler);
   }
@@ -140,7 +140,7 @@ export default class EditPointView extends AbstractView{
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSubmitClick();
+    this.#handleSubmitClick(this.#point);
   };
 
   #deleteClickHandler = (evt) => {
