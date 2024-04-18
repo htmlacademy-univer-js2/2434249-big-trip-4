@@ -1,6 +1,7 @@
 import {POINT_EMPTY} from '../mock/const.js';
 import {formatToShortDate, formatToDay} from '../utils.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {TotalPrice} from '../view/event-point-view.js';
 
 const findDestinationForPoint = (point, pointDestination) =>
   pointDestination.find((destination) => destination.id === point.destination);
@@ -13,7 +14,6 @@ const createDestinationElement = (pointDestination) =>
     ? pointDestination.map((destination) => (`${destination} - `)).join('').slice(0, -2)
     : `${pointDestination[0]} - ... - ${pointDestination[pointDestination.length - 1]}`;
 
-//общую стоимость считает не правильно, пока не знаю, как исправить
 const createTripInfoTemplate = ({points, pointDestination}) => (`<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${createDestinationElement(pointDestination)}</h1>
@@ -23,7 +23,7 @@ const createTripInfoTemplate = ({points, pointDestination}) => (`<section class=
 
     <p class="trip-info__cost">
       Total: €&nbsp;<span class="trip-info__cost-value">
-      ${points.map((point) => point.basePrice).reduce((sum, x) => sum + x, 0)}</span>
+      ${TotalPrice.PRICE}</span>
     </p>
     </section>`);
 

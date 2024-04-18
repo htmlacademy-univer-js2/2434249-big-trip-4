@@ -2,6 +2,10 @@ import {formatToTime, formatToDate, formatToShortDate, getPointDuration} from '.
 import {POINT_EMPTY} from '../mock/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
+export const TotalPrice = {
+  PRICE: 0
+};
+
 const getOfferItem = (offer) => `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     +€&nbsp;
@@ -11,6 +15,8 @@ const getOfferItem = (offer) => `<li class="event__offer">
 const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
   const {basePrice, dateFrom, dateTo, isFavorite, type} = point;
   const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer)).join('');
+  const price = pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice;
+  TotalPrice.PRICE += price;
 
   return (`<li class="trip-events__item">
   <div class="event">
@@ -29,7 +35,7 @@ const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
     </div>
     <p class="event__price">
       €&nbsp;<span class="event__price-value">
-      ${pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice}</span>
+      ${price}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

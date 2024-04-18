@@ -3,7 +3,7 @@ import {getRandomInt, getRandomBulValue, getDate, getRandomArrayElement} from '.
 export const generatePoint = (offerType, destinationId, offerIds) => ({
   id: crypto.randomUUID(),
   basePrice: getRandomInt(),
-  dateFrom: getDate(true),
+  dateFrom: getDate(false),
   dateTo: getDate(true),
   destination: destinationId,
   isFavorite: getRandomBulValue(),

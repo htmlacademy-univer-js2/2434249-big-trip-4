@@ -12,9 +12,8 @@ export default class FilterPresenter{
   }
 
   init(){
-    const points = [...this.#pointsModel.get()];
     const tripControlFiltersElement = this.#filterContainer.querySelector('.trip-controls__filters');
-    const filters = generateFilter(points);
+    const filters = generateFilter(this.#pointsModel);
 
     render(new FilterView({
       filters,

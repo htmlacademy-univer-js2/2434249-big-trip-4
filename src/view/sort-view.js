@@ -1,35 +1,40 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {generateSorter} from '../mock/sort.js';
+import {SortType} from '../mock/const.js';
 
-const createSortItemTemplate = (sorter, isChecked) => {
-  const {type} = sorter;
-
-  return (`<div class="trip-sort__item  trip-sort__item--${type.toLowerCase()}">
-  <input id="sort-${type.toLowerCase()}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${type.toLowerCase()}"
+const createSortItemTemplate = (sorter, isChecked) => (`<div class="trip-sort__item  trip-sort__item--${sorter}">
+  <input id="sort-${sorter}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorter}"
+  data-sort-type="${SortType}"
   ${isChecked ? 'checked' : ''}
-  ${type === 'EVENT' || type === 'OFFERS' ? 'disabled' : ''}>
-  <label class="trip-sort__btn" for="sort-${type.toLowerCase()}">${type}</label>
+  ${sorter === 'event' || sorter === 'offers' ? 'disabled' : ''}>
+  <label class="trip-sort__btn" for="sort-${sorter}"
+  data-sort-type="${sorter}">${sorter.toUpperCase()}</label>
 </div>`);
-};
 
-const createSortTemplate = (sort) => {
-  const sorterItemsTemplate = sort.map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
+const createSortTemplate = () => {
+  const sorterItemsTemplate = Object.values(SortType).map((sorter, index) => createSortItemTemplate(sorter, index === 0)).join('');
 
   return (`<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-${sorterItemsTemplate}
-</form>`);};
-
+  ${sorterItemsTemplate}</form>`);
+};
 export default class SortView extends AbstractView {
-  #sorter = null;
-  #points = [];
+  #handleSortTypeChange = null;
 
-  constructor({points}) {
+  constructor({onSortTypeChange}) {
     super();
-    this.#points = points;
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
 
   get template() {
-    const sort = generateSorter(this.#points);
-    return createSortTemplate(sort);
+    return createSortTemplate();
   }
+
+  #sortTypeChangeHandler = (evt) => {
+    if(evt.target.tagName !== 'LABEL') {
+      return;
+    }
+
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 }

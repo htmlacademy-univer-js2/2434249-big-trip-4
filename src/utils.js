@@ -43,9 +43,9 @@ export const getRandomPictureElement = (city) => ({
 });
 
 export const Duration = {
-  MIN: 60,
-  HOUR: 10,
-  DAY: 3
+  MIN: 59,
+  HOUR: 5,
+  DAY: 5
 };
 
 export const getDate = (add) => {
@@ -69,3 +69,13 @@ export const getDate = (add) => {
 export const getPicturesArray = (city) => Array.from({length: getRandomIntFromRange(0, 5)}, () => getRandomPictureElement(city));
 
 export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+export const sortPointDay = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+
+export const sortPointPrice = (pointA, pointB) => pointA.basePrice - pointB.basePrice;
+
+export const sortPointTime = (pointA, pointB) => {
+  const timeDifferencePointA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+  const timeDifferencePointB = dayjs(pointA.dateTo).diff(dayjs(pointB.dateFrom));
+  return timeDifferencePointA - timeDifferencePointB;
+};

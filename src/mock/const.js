@@ -14,6 +14,11 @@ export const BooleanValues = [
   false
 ];
 
+export const MODE = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
 export const POINT_EMPTY = {
   id: 1,
   basePrice: 0,
@@ -84,9 +89,9 @@ export const FilterType = {
 };
 
 export const SortType = {
-  DAY: 'DAY',
-  EVENT: 'EVENT',
-  TIME: 'TIME',
-  PRICE: 'PRICE',
-  OFFERS: 'OFFERS'
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
 };
