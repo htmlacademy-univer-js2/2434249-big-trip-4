@@ -15,14 +15,13 @@ const getOfferItem = (offer) => `<li class="event__offer">
 const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
   const {basePrice, dateFrom, dateTo, isFavorite, type} = point;
   const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer)).join('');
-  const price = pointOffers.map((offer) => offer.price).reduce((sum, x) => sum + x, 0) + basePrice;
-  TotalPrice.PRICE += price;
+  TotalPrice.PRICE += basePrice;
 
   return (`<li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="${formatToDate(dateFrom)}">${formatToShortDate(dateFrom)}</time>
     <div class="event__type">
-      <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
+      <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="${type} icon">
     </div>
     <h3 class="event__title">${type} ${pointDestination.name}</h3>
     <div class="event__schedule">
@@ -35,7 +34,7 @@ const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
     </div>
     <p class="event__price">
       €&nbsp;<span class="event__price-value">
-      ${price}</span>
+      ${basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

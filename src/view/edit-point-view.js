@@ -71,10 +71,7 @@ const createEditPointTemplate = ({point, pointDestination, pointOffers}) => {
         €
       </label>
       <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="
-      ${pointOffers
-    .filter((offer) => point.offers.includes(offer.id))
-    .map((offer) => offer.price)
-    .reduce((sum, x) => sum + x, 0) + basePrice}">
+      ${basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
