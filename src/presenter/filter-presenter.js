@@ -1,6 +1,7 @@
 import {render} from '../framework/render.js';
 import FilterView from '../view/filter-view.js';
 import {generateFilter} from '../mock/filters.js';
+import {EmptyListMessage} from '../mock/const.js';
 
 export default class FilterPresenter{
   #filterContainer = null;
@@ -12,23 +13,28 @@ export default class FilterPresenter{
   }
 
   init(){
-    const points = [...this.#pointsModel.get()];
     const tripControlFiltersElement = this.#filterContainer.querySelector('.trip-controls__filters');
-    const filters = generateFilter(points);
+    const filters = generateFilter(this.#pointsModel);
 
     render(new FilterView({
       filters,
       onFilterClick: (filterType) => {
-        this.#renderFilteredPoints(filters.filter((filter) => (filter.type === filterType))[0]);
+        this.#renderFilteredPoints(filters.filter((filter) => (filter.type === filterType))[0], filterType);
       }
     }), tripControlFiltersElement);
   }
 
-  #renderFilteredPoints(points){
-    points.filteredPoints.forEach((point) => {
-      //Заглушка, пока не знаю, как решить
+  #renderFilteredPoints(points, filterType){
+    if (points.filteredPoints.length !== 0) {
+      points.filteredPoints.forEach((point) => {
+        //Пока так
+        // eslint-disable-next-line no-console
+        console.log(point);
+      });
+    }
+    else {
       // eslint-disable-next-line no-console
-      console.log(point);
-    });
+      console.log(EmptyListMessage[filterType]);
+    }
   }
 }
