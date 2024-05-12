@@ -205,26 +205,4 @@ export default class EditPointView extends AbstractStatefulView{
   static parsePointToState(point) {
     return {...point};
   }
-
-  static parseStateToPoint(state, destination) {
-    const point = {...state};
-
-    if (!point.isOffers) {
-      point.offers = null;
-    }
-
-    if (!point.isPictures) {
-      destination.pictures = null;
-    }
-
-    if (!point.isDescription) {
-      destination.description = null;
-    }
-
-    delete point.isOffers;
-    delete point.isPictures;
-    delete point.isDescription;
-
-    return point;
-  }
 }
