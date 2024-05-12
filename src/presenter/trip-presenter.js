@@ -21,7 +21,7 @@ export default class TripPresenter {
   #pointPresenterArray = new Map();
 
   #currentSortType = SortType.DAY;
-  #sourcedBoardTasks = [];
+  #sourcedTripPoints = [];
 
   #sortComponent = null;
   #filterComponent = null;
@@ -40,10 +40,10 @@ export default class TripPresenter {
     this.#tripInfoElement = this.#tripContainer.querySelector('.trip-main');
     this.#newEventElement = document.querySelector('.trip-main__event-add-btn');
 
-    this.#sourcedBoardTasks = [...this.#pointsModel.get()];
+    this.#sourcedTripPoints = [...this.#pointsModel.get()];
     this.#points = [...this.#pointsModel.get()];
     this.#points.sort(sortPointDay);
-    this.#sourcedBoardTasks.sort(sortPointDay);
+    this.#sourcedTripPoints.sort(sortPointDay);
 
     this.#newEventElement.addEventListener('click', () => this.#addPointHandler(this.#newEventElement));
     this.#renderFilter();
@@ -66,7 +66,7 @@ export default class TripPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
-    this.#sourcedBoardTasks = updateItem(this.#sourcedBoardTasks, updatedPoint);
+    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
     this.#pointPresenterArray.get(updatedPoint.id).init(updatedPoint);
   };
 
@@ -92,7 +92,7 @@ export default class TripPresenter {
         this.#points.sort(sortPointTime);
         break;
       default:
-        this.#points = [...this.#sourcedBoardTasks];
+        this.#points = [...this.#sourcedTripPoints];
     }
 
     this.#currentSortType = sortType;
