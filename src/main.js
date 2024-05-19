@@ -12,6 +12,8 @@ const destinationsModel = new DestinationModel(mockService);
 const pointsModel = new PointModel(mockService);
 const offersModel = new OfferModel(mockService);
 
+// console.log(destinationsModel.get()[0]);
+
 const tripPresenterElement = new TripPresenter({
   tripContainer: bodyElement,
   destinationsModel,

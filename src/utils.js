@@ -72,10 +72,10 @@ export const updateItem = (items, update) => items.map((item) => item.id === upd
 
 export const sortPointDay = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
-export const sortPointPrice = (pointA, pointB) => pointA.basePrice - pointB.basePrice;
+export const sortPointPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 export const sortPointTime = (pointA, pointB) => {
   const timeDifferencePointA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
   const timeDifferencePointB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
-  return timeDifferencePointA - timeDifferencePointB;
+  return timeDifferencePointB - timeDifferencePointA;
 };

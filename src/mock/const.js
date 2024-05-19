@@ -1,3 +1,5 @@
+import {getRandomIntFromRange} from '../utils.js';
+
 export const DATE_FORMAT = 'MMM D';
 export const TIME_FORMAT = 'HH:mm';
 export const DAY_FOMAT = 'D';
@@ -5,8 +7,8 @@ export const FULL_TIME_FOMAT = 'YYYY-MM-DDTHH:mm';
 export const SLASH_TIME_FOMAT = 'DD/MM/YY HH:mm';
 export const MILLISECONDS_IN_DAY = 86400000;
 export const MILLISECONDS_IN_HOUR = 3600000;
-export const POINT_COUNT = 10;
-export const DESTINATION_COUNT = POINT_COUNT;
+//понимаю, что в константах должны быть константы, а не рандомные данные. сделал ради эксперимента
+export const POINT_COUNT = getRandomIntFromRange(0, 10);
 export const OFFER_COUNT = 10;
 
 export const BooleanValues = [
@@ -80,6 +82,8 @@ export const CITIES = [
   'Manchester',
   'Chelmsford',
 ];
+
+export const DESTINATION_COUNT = CITIES.length;
 
 export const FilterType = {
   EVERYTHING: 'EVERYTHING',
