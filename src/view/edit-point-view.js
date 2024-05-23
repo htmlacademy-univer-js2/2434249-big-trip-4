@@ -149,7 +149,7 @@ export default class EditPointView extends AbstractStatefulView{
     });
   }
 
-  resetPoint = (point) => {
+  reset = (point) => {
     this.#pointOffers = this.#offers.getByType(point.type);
     this.updateElement(point);
   };
@@ -228,7 +228,7 @@ export default class EditPointView extends AbstractStatefulView{
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSubmitClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleSubmitClick(this._state);
   };
 
   #deleteClickHandler = (evt) => {
@@ -279,5 +279,5 @@ export default class EditPointView extends AbstractStatefulView{
 
   static parsePointToState = (point) => ({...point});
 
-  static parseStateToPoint = (state) => state.point;
+  static parseStateToPoint = (state) => state;
 }

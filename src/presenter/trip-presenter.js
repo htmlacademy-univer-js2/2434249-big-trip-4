@@ -142,7 +142,7 @@ export default class TripPresenter {
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onDataChange: this.#handlePointChange,
-      onModeChange: this.#handleModeChange
+      onModeChange: () => this.#handleModeChange
     });
 
     pointPresenter.init(point);
