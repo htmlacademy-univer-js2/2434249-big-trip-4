@@ -1,7 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import EventPointView from '../view/event-point-view.js';
-import {MODE} from '../mock/const.js';
+import {MODE, UpdateType, UserAction} from '../mock/const.js';
+import {isBigDifference} from '../utils.js';
 
 export default class PointPresenter {
   #point = null;
@@ -32,17 +33,18 @@ export default class PointPresenter {
       point: this.#point,
       pointDestination: this.#destinationsModel.getById(this.#point.destination),
       pointOffers: this.#offersModel.getByType(this.#point.type),
-      onEditClick: this.#handleEditClick,
-      onFavoriteClick: this.#handleFavoriteClick
+      onEditClick: this.#editClickHandler,
+      onFavoriteClick: this.#favoriteClickHandler
     });
 
     this.#pointEditComponent = new EditPointView({
       point: this.#point,
       pointDestination: this.#destinationsModel,
       pointOffers: this.#offersModel,
-      onSubmitClick: this.#handleFormSubmit,
-      onDeleteClick:  this.#handleDeteleClick,
-      onRollUpClick: this.#handleRollUpClick
+      onSubmitClick: this.#formSubmitHandler,
+      onDeleteClick:  this.#deleteClickHandler,
+      onResetClick: this.#resetClickHandler,
+      onCancelClick: this.#cancelClickHandler
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -50,11 +52,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === MODE.DEFAULT){
+    if (this.#mode === MODE.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#mode === MODE.EDITING){
+    if (this.#mode === MODE.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
@@ -69,37 +71,9 @@ export default class PointPresenter {
     }
   }
 
-  #handleEditClick = () => {
-    this.#replacePointToForm();
-  };
-
-  #handleDeteleClick = () => {
+  destroy = () => {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
-  };
-
-  #handleRollUpClick = () => {
-    this.#pointEditComponent.reset(this.#point);
-    this.#replaceFormToPoint();
-  };
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#replaceFormToPoint();
-    }
-  };
-
-  #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
-  };
-
-  #handleFormSubmit = (point) => {
-    this.#point = point;
-    this.#handleDataChange(point);
-    this.#replaceFormToPoint();
   };
 
   #replacePointToForm() {
@@ -114,4 +88,65 @@ export default class PointPresenter {
     replace(this.#pointComponent, this.#pointEditComponent);
     this.#mode = MODE.DEFAULT;
   }
+
+  // #deleteClickHandler = () => {
+  //   remove(this.#pointComponent);
+  //   remove(this.#pointEditComponent);
+  //   document.removeEventListener('keydown', this.#escKeyDownHandler);
+  // };
+
+  #deleteClickHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
+  #cancelClickHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
+      this.#replaceFormToPoint();
+    }
+  };
+
+  #editClickHandler = () => {
+    this.#replacePointToForm();
+  };
+
+  #favoriteClickHandler = () => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point,
+        isFavorite: !this.#point.isFavorite
+      });
+  };
+
+  #resetClickHandler = () => {
+    this.#pointEditComponent.reset(this.#point);
+    this.#replaceFormToPoint();
+  };
+
+  #formSubmitHandler = (updatedPoint) => {
+    const isMinor = isBigDifference(updatedPoint, this.#point);
+
+    // this.#point = updatedPoint;
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinor ? UpdateType.MINOR : UpdateType.PATCH,
+      updatedPoint
+    );
+
+    this.#replaceFormToPoint();
+  };
 }

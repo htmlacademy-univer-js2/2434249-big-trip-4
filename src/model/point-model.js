@@ -1,8 +1,14 @@
-export default class PointModel {
-  #points = null;
+import Odsersable from '../framework/observable.js';
+import {updateItem} from '../utils.js';
+
+export default class PointModel extends Odsersable {
+  #points = [];
+  #service = null;
 
   constructor(service) {
-    this.#points = service.getPoints();
+    super();
+    this.#service = service;
+    this.#points = this.#service.getPoints();
   }
 
   get() {
@@ -11,5 +17,23 @@ export default class PointModel {
 
   getById(id) {
     return this.#points.find((points) => points.id === id);
+  }
+
+  update(updateType, point) {
+    const updatedPoint = this.#service.updatePoint(point);
+    this.#points = updateItem(this.#points, updatedPoint);
+    this._notify(updateType, updatedPoint);
+  }
+
+  add(updateType, point) {
+    const addedPoint = this.#service.addPoint(point);
+    this.#points.push(addedPoint);
+    this._notify(updateType, addedPoint);
+  }
+
+  delete(updateType, point) {
+    this.#service.deletePoint(point);
+    this.#points = this.#points.filter((pointItem) => pointItem.id !== point.id);
+    this._notify(updateType);
   }
 }

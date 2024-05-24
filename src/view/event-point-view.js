@@ -1,5 +1,4 @@
 import {formatToTime, formatToDate, formatToShortDate, getPointDuration} from '../utils.js';
-import {POINT_EMPTY} from '../mock/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 export const TotalPrice = {
@@ -55,21 +54,26 @@ const createEventPointTemplate = ({point, pointDestination, pointOffers}) => {
 
 export default class EventPointView extends AbstractView {
   #point = null;
-  #pointDestination = [];
-  #pointOffers = [];
+  #pointDestination = null;
+  #pointOffers = null;
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({point = POINT_EMPTY, pointDestination, pointOffers, onEditClick, onFavoriteClick}) {
+  constructor({point, pointDestination, pointOffers, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#pointDestination = pointDestination;
     this.#pointOffers = pointOffers.filter((offer) => point.offers.includes(offer.id));
 
     this.#handleEditClick = onEditClick;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     this.#handleFavoriteClick = onFavoriteClick;
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
+    this.element
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {

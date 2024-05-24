@@ -79,3 +79,8 @@ export const sortPointTime = (pointA, pointB) => {
   const timeDifferencePointB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
   return timeDifferencePointB - timeDifferencePointA;
 };
+
+export const isBigDifference = (pointA, pointB) =>
+  pointA.dateFrom !== pointA.dateFrom
+  || pointA.basePrice !== pointB.basePrice
+  || dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom)) !== dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
