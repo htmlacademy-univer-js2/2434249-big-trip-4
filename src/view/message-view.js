@@ -20,7 +20,6 @@ export default class MessageView extends AbstractView {
 
   get template() {
     const message = FilterMassege[this.#filterType];
-
-    return createMessageTemplate({message});
+    return createMessageTemplate(message);
   }
 }

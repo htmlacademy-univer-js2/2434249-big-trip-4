@@ -15,7 +15,8 @@ export default class PointPresenter {
   #handleModeChange = null;
   #mode = MODE.DEFAULT;
 
-  constructor({eventList, destinationsModel, offersModel, onDataChange, onModeChange}){
+  constructor({eventList, destinationsModel,
+    offersModel, onDataChange, onModeChange}) {
     this.#eventList = eventList;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
@@ -64,36 +65,30 @@ export default class PointPresenter {
     remove(prevPointEditComponent);
   }
 
-  resetView() {
+  resetView = () => {
     if (this.#mode !== MODE.DEFAULT) {
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
-  }
+  };
 
   destroy = () => {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
   };
 
-  #replacePointToForm() {
+  #replacePointToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = MODE.EDITING;
-  }
+  };
 
-  #replaceFormToPoint() {
+  #replaceFormToPoint = () => {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     replace(this.#pointComponent, this.#pointEditComponent);
     this.#mode = MODE.DEFAULT;
-  }
-
-  // #deleteClickHandler = () => {
-  //   remove(this.#pointComponent);
-  //   remove(this.#pointEditComponent);
-  //   document.removeEventListener('keydown', this.#escKeyDownHandler);
-  // };
+  };
 
   #deleteClickHandler = (point) => {
     this.#handleDataChange(
@@ -140,7 +135,6 @@ export default class PointPresenter {
   #formSubmitHandler = (updatedPoint) => {
     const isMinor = isBigDifference(updatedPoint, this.#point);
 
-    // this.#point = updatedPoint;
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       isMinor ? UpdateType.MINOR : UpdateType.PATCH,

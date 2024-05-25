@@ -33,7 +33,6 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers, type}) 
   const pictureItemsTemplate = pointDestinations
     .getById(destination)
     ?.pictures.map((picture) => getPicrtureItem(picture)).join('');
-  console.log({state, pointDestination, pictureItemsTemplate});
   const typeItemsTemplate = ROUTE_TYPE.map((typeItem) => getEventTypeItem(typeItem, type)).join('');
   const cityItemsTemplate = CITIES.map((cityItem) => getDestinationItem(cityItem)).join('');
   const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer, offers)).join('');
@@ -141,13 +140,13 @@ export default class EditPointView extends AbstractStatefulView{
     this.#offers = pointOffers;
     this.#pointOffers = pointOffers.getByType(point.type);
 
-    this._setState(EditPointView.parsePointToState(point));
-
     this.#handleSubmitClick = onSubmitClick;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleResetClick = onResetClick;
     this.#handleCancelClick = onCancelClick;
     this.#type = type;
+
+    this._setState(EditPointView.parsePointToState(point));
 
     this._restoreHandlers();
   }
@@ -161,10 +160,7 @@ export default class EditPointView extends AbstractStatefulView{
     });
   }
 
-  reset = (point) => {
-    this.#pointOffers = this.#offers.getByType(point.type);
-    this.updateElement(point);
-  };
+  reset = (point) => this.updateElement(point);
 
   _restoreHandlers() {
     if (this.#type === EditType.EDITING) {
@@ -247,7 +243,6 @@ export default class EditPointView extends AbstractStatefulView{
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();
-    console.log(this._state);
     this.#handleSubmitClick(this._state);
   };
 

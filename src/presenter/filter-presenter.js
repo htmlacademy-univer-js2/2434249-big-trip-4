@@ -1,7 +1,8 @@
 import {remove, render, replace} from '../framework/render.js';
 import FilterView from '../view/filter-view.js';
-import {generateFilter} from '../mock/filters.js';
 import {UpdateType} from '../mock/const.js';
+// import {FilterType} from '../model/filter-model.js';
+import {filter} from '../utils.js';
 
 export default class FilterPresenter{
   #container = null;
@@ -32,6 +33,27 @@ export default class FilterPresenter{
       }));
   }
 
+  // get filters() {
+  //   const points = this.#pointsModel.points;
+
+  //   return [
+  //     {
+  //       type: FilterType.EVERYTHING,
+  //       name: 'EVERYTHING',
+  //       count: filter[FilterType.EVERYTHING](points).length,
+  //     },
+  //     {
+  //       type: FilterType.PAST,
+  //       name: 'PAST',
+  //       count: filter[FilterType.PAST](points).length,
+  //     },
+  //     {
+  //       type: FilterType.FUTURE,
+  //       name: 'FUTURE',
+  //       count: filter[FilterType.FUTURE](points).length,
+  //     }
+  //   ];
+  // }
 
   init(){
     this.#currentFilter = this.#filterModel.get();
@@ -45,8 +67,8 @@ export default class FilterPresenter{
     });
 
     if (prevFilterComponent === null) {
-      render(this.#filterComponent, prevFilterComponent);
-      remove(prevFilterComponent);
+      render(this.#filterComponent, this.#container);
+      return;
     }
 
     replace(this.#filterComponent, prevFilterComponent);
@@ -54,6 +76,10 @@ export default class FilterPresenter{
   }
 
   #filterTypeChangeHandler = (filterType) => {
+    // if (filterType === this.#filterModel.filter) {
+    //   return;
+    // }
+
     this.#filterModel.set(UpdateType.MAJOR, filterType);
   };
 

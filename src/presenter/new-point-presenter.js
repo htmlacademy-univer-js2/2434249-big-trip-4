@@ -35,6 +35,7 @@ export default class NewPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  // eslint-disable-next-line no-unused-vars
   destroy = ({isCanceled = true} = {}) => {
     if (this.#pointNewComponent === null) {
       return;
