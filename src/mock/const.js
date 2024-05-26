@@ -22,11 +22,11 @@ export const MODE = {
 };
 
 export const POINT_EMPTY = {
-  id: 1,
+  id: crypto.randomUUID(),
   basePrice: 0,
-  dateFrom: '',
-  dateTo: '',
-  destination: '',
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
   ifFavorite: false,
   offers: [],
   type: 'Flight',
@@ -105,4 +105,21 @@ export const EmptyListMessage = {
   FUTURE: '<p class="trip-events__msg">There are no past events now</p>',
   PRESENT: '<p class="trip-events__msg">There are no present events now</p>',
   PAST: '<p class="trip-events__msg">There are no future events now</p>'
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  CREATE_POINT: 'CREATE_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export const EditType = {
+  CREATING: 'CREATING',
+  EDITING: 'EDITING'
 };

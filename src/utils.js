@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
-import {DAY_FOMAT, DATE_FORMAT, TIME_FORMAT, FULL_TIME_FOMAT, MILLISECONDS_IN_DAY, MILLISECONDS_IN_HOUR, BooleanValues, SLASH_TIME_FOMAT} from './mock/const';
+import {DAY_FOMAT, DATE_FORMAT, TIME_FORMAT,
+  FULL_TIME_FOMAT, MILLISECONDS_IN_DAY, MILLISECONDS_IN_HOUR,
+  BooleanValues, SLASH_TIME_FOMAT} from './mock/const';
+// import {FilterType} from './model/filter-model.js';
 
 // eslint-disable-next-line no-undef
 const duration = require('dayjs/plugin/duration');
@@ -79,3 +82,23 @@ export const sortPointTime = (pointA, pointB) => {
   const timeDifferencePointB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
   return timeDifferencePointB - timeDifferencePointA;
 };
+
+export const isBigDifference = (pointA, pointB) =>
+  pointA.dateFrom !== pointA.dateFrom
+  || pointA.basePrice !== pointB.basePrice
+  || dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom)) !== dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
+
+// const isPointFuture = (point) => dayjs(point.dateFrom).diff(dayjs(new Date())) > 0;
+// const isPointPresent = (point) => dayjs(point.dateFrom).diff(dayjs(new Date())) > 0;
+// const isPointPast = (point) => dayjs(point.dateTo).diff(dayjs(new Date())) < 0;
+
+// export const filter = {
+//   [FilterType.EVERYTHING]: (points) => console.log(points),
+//   // points.filter((point) => point),
+//   [FilterType.FUTURE]:(points) => console.log(points),
+//   // points.filter((point) => !ispointExpired(point.dateFrom) && !ispointExpired(point.dateTo)),
+//   [FilterType.PRESENT]:(points) => console.log(points),
+//   // points.filter((point) => ispointExpired(point.dateFrom) && !ispointExpired(point.dateTo)),
+//   [FilterType.PAST]: (points) => console.log(points),
+//   // points.filter((point) => ispointExpired(point.dateFrom) && ispointExpired(point.dateTo))
+// };

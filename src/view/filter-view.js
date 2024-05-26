@@ -21,11 +21,12 @@ const createFilterTemplate = (filterItems) => {
 
 export default class FilterView extends AbstractView{
   #filters = null;
-  #handleFilterClick = null;
-  constructor({filters, onFilterClick}) {
+  #handleFilterTypeChange = null;
+
+  constructor({filters, onFilterTypeChange}) {
     super();
     this.#filters = filters;
-    this.#handleFilterClick = onFilterClick;
+    this.#handleFilterTypeChange = onFilterTypeChange;
 
     this.element.querySelectorAll('.trip-filters__filter')
       .forEach((filterElement) => filterElement.addEventListener('click', this.#filterClickHandler));
@@ -37,6 +38,6 @@ export default class FilterView extends AbstractView{
 
   #filterClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFilterClick(evt.target.innerHTML);
+    this.#handleFilterTypeChange (evt.target.innerHTML);
   };
 }

@@ -1,5 +1,5 @@
 import {formatToSlashDate} from '../utils.js';
-import {CITIES, POINT_EMPTY, ROUTE_TYPE} from '../mock/const.js';
+import {CITIES, POINT_EMPTY, ROUTE_TYPE , EditType} from '../mock/const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
@@ -25,12 +25,14 @@ const getOfferItem = (offer, pointOffers) => `<div class="event__offer-selector"
         </label>
     </div>`;
 
-const createEditPointTemplate = ({state, pointDestinations, pointOffers}) => {
-  const {basePrice, dateFrom, dateTo, type, id, destination, offers} = state;
-  const pointDestination = pointDestinations.getById(destination);
+const createEditPointTemplate = ({state, pointDestinations, pointOffers, type}) => {
+  const {basePrice, dateFrom, dateTo, id, destination, offers} = state;
+  const pointDestination = typeof(pointDestinations.getById(destination)) === 'undefined'
+    ? null
+    : pointDestinations.getById(destination);
   const pictureItemsTemplate = pointDestinations
     .getById(destination)
-    .pictures.map((picture) => getPicrtureItem(picture)).join('');
+    ?.pictures.map((picture) => getPicrtureItem(picture)).join('');
   const typeItemsTemplate = ROUTE_TYPE.map((typeItem) => getEventTypeItem(typeItem, type)).join('');
   const cityItemsTemplate = CITIES.map((cityItem) => getDestinationItem(cityItem)).join('');
   const offerItemsTemplate = pointOffers.map((offer) => getOfferItem(offer, offers)).join('');
@@ -41,7 +43,7 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers}) => {
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
         <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} icon">
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${state.type}.png" alt="${state.type} icon">
       </label>
       <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
 
@@ -55,9 +57,10 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers}) => {
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
-        ${type}
+        ${state.type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
+      value="${pointDestination ? pointDestination.name : ''}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${cityItemsTemplate}
       </datalist>
@@ -76,15 +79,17 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers}) => {
         <span class="visually-hidden">Price</span>
         €
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price"
+      <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price"
       value="${basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
+    ${type === 'EDITING'
+    ? `<button class="event__reset-btn" type="reset">Delete</button>
     <button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
-    </button>
+    </button>`
+    : '<button class="event__reset-btn" type="reset">Cancel</button>'}
   </header>
   <section class="event__details">
   ${state.offers.length !== 0
@@ -96,12 +101,12 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers}) => {
   </section>`
     : ''}
     <section class="event__section  event__section--destination">
-    ${pointDestination.description !== null
+    ${pointDestination
     ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${pointDestination.description}</p>`
     : ''}
 
-  ${pointDestination.pictures.length !== 0
+  ${pointDestination
     ? `<div class="event__photos-container">
      <div class="event__photos-tape">
        ${pictureItemsTemplate}
@@ -123,20 +128,25 @@ export default class EditPointView extends AbstractStatefulView{
   #datepickerTo = null;
   #handleSubmitClick = null;
   #handleDeleteClick = null;
-  #handleRollUpClick = null;
+  #handleResetClick = null;
+  #handleCancelClick = null;
+  #type;
 
-  constructor({point = POINT_EMPTY, pointDestination, pointOffers, onSubmitClick, onDeleteClick, onRollUpClick}) {
+  constructor({point = POINT_EMPTY, pointDestination, pointOffers,
+    onSubmitClick, onDeleteClick, onResetClick, onCancelClick, type = EditType.EDITING}) {
     super();
     this.#destinations = pointDestination;
     this.#pointDestination = pointDestination.getById(point.destination);
     this.#offers = pointOffers;
     this.#pointOffers = pointOffers.getByType(point.type);
 
-    this._setState(EditPointView.parsePointToState(point));
-
     this.#handleSubmitClick = onSubmitClick;
     this.#handleDeleteClick = onDeleteClick;
-    this.#handleRollUpClick = onRollUpClick;
+    this.#handleResetClick = onResetClick;
+    this.#handleCancelClick = onCancelClick;
+    this.#type = type;
+
+    this._setState(EditPointView.parsePointToState(point));
 
     this._restoreHandlers();
   }
@@ -145,19 +155,24 @@ export default class EditPointView extends AbstractStatefulView{
     return createEditPointTemplate({
       state:  this._state,
       pointDestinations: this.#destinations,
-      pointOffers: this.#pointOffers
+      pointOffers: this.#pointOffers,
+      type: this.#type
     });
   }
 
-  resetPoint = (point) => {
-    this.#pointOffers = this.#offers.getByType(point.type);
-    this.updateElement(point);
-  };
+  reset = (point) => this.updateElement(point);
 
   _restoreHandlers() {
+    if (this.#type === EditType.EDITING) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpClickHandler);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    }
+
+    if (this.#type === EditType.CREATING) {
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
+    }
+
     this.element.querySelector('form').addEventListener('submit', this.#submitClickHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#routeTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
@@ -228,17 +243,22 @@ export default class EditPointView extends AbstractStatefulView{
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSubmitClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleSubmitClick(this._state);
   };
 
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleDeleteClick();
+    this.#handleDeleteClick(this._state);
   };
 
   #rollUpClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleRollUpClick();
+    this.#handleResetClick();
+  };
+
+  #resetClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCancelClick();
   };
 
   #routeTypeChangeHandler = (evt) => {
@@ -279,5 +299,5 @@ export default class EditPointView extends AbstractStatefulView{
 
   static parsePointToState = (point) => ({...point});
 
-  static parseStateToPoint = (state) => state.point;
+  static parseStateToPoint = (state) => state;
 }

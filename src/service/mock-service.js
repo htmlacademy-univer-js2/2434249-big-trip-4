@@ -47,4 +47,16 @@ export default class MockService {
       return generatePoint(type, destination.id, offerIds);
     });
   }
+
+  updatePoint(updatedPoint) {
+    return updatedPoint;
+  }
+
+  addPoint(date) {
+    return {...date, id: crypto.randomUUID()};
+  }
+
+  deletePoint() {
+    //....
+  }
 }

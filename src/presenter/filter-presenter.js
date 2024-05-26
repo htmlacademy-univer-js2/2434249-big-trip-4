@@ -1,40 +1,89 @@
-import {render} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
 import FilterView from '../view/filter-view.js';
-import {generateFilter} from '../mock/filters.js';
-import {EmptyListMessage} from '../mock/const.js';
+import {UpdateType} from '../mock/const.js';
+// import {FilterType} from '../model/filter-model.js';
+import {filter} from '../utils.js';
 
 export default class FilterPresenter{
-  #filterContainer = null;
-  #pointsModel = null;
+  #container = null;
+  #filterComponent = null;
 
-  constructor({filterContainer, pointsModel}) {
-    this.#filterContainer = filterContainer;
+  #pointsModel = null;
+  #filterModel = null;
+
+  #currentFilter = null;
+
+  constructor({container, pointsModel, filterModel}) {
+    this.#container = container;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
+
+    this.#pointsModel.addObserver(this.#modelEventHandler);
+    this.#filterModel.addObserver(this.#modelEventHandler);
   }
+
+  get filters() {
+    const points = this.#pointsModel.get();
+
+    return Object.entries(filter)
+      .map(([filterType, filterPoints]) => ({
+        type: filterType,
+        isChecked: filterType === this.#currentFilter,
+        isDisable: filterPoints(points.length) === 0
+      }));
+  }
+
+  // get filters() {
+  //   const points = this.#pointsModel.points;
+
+  //   return [
+  //     {
+  //       type: FilterType.EVERYTHING,
+  //       name: 'EVERYTHING',
+  //       count: filter[FilterType.EVERYTHING](points).length,
+  //     },
+  //     {
+  //       type: FilterType.PAST,
+  //       name: 'PAST',
+  //       count: filter[FilterType.PAST](points).length,
+  //     },
+  //     {
+  //       type: FilterType.FUTURE,
+  //       name: 'FUTURE',
+  //       count: filter[FilterType.FUTURE](points).length,
+  //     }
+  //   ];
+  // }
 
   init(){
-    const tripControlFiltersElement = this.#filterContainer.querySelector('.trip-controls__filters');
-    const filters = generateFilter(this.#pointsModel);
+    this.#currentFilter = this.#filterModel.get();
 
-    render(new FilterView({
-      filters,
-      onFilterClick: (filterType) => {
-        this.#renderFilteredPoints(filters.filter((filter) => (filter.type === filterType))[0], filterType);
-      }
-    }), tripControlFiltersElement);
+    const filters = this.filters;
+    const prevFilterComponent = this.#filterComponent;
+
+    this.#filterComponent = new FilterView({
+      items: filters,
+      onItemChange: this.#filterTypeChangeHandler
+    });
+
+    if (prevFilterComponent === null) {
+      render(this.#filterComponent, this.#container);
+      return;
+    }
+
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   }
 
-  #renderFilteredPoints(points, filterType){
-    if (points.filteredPoints.length !== 0) {
-      points.filteredPoints.forEach((point) => {
-        //Пока так
-        // eslint-disable-next-line no-console
-        console.log(point);
-      });
-    }
-    else {
-      // eslint-disable-next-line no-console
-      console.log(EmptyListMessage[filterType]);
-    }
-  }
+  #filterTypeChangeHandler = (filterType) => {
+    // if (filterType === this.#filterModel.filter) {
+    //   return;
+    // }
+
+    this.#filterModel.set(UpdateType.MAJOR, filterType);
+  };
+
+  #modelEventHandler = () => {
+    this.init();
+  };
 }
