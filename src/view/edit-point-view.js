@@ -7,7 +7,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const getPicrtureItem = (picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
 
-const getDestinationItem = (city, isDisabled) => `<option value="${city} ${isDisabled ? 'disabled' : ''}"></option>`;
+const getDestinationItem = (city, isDisabled) => `<option value="${city}" ${isDisabled ? 'disabled' : ''}></option>`;
 
 const getEventTypeItem = (typeItem, type, isDisabled) => `<div class="event__type-item">
     <input id="event-type-${typeItem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem}"
@@ -30,13 +30,12 @@ const createEditPointTemplate = ({state, pointDestinations, pointOffers, type}) 
 
   const {basePrice, dateFrom, dateTo, id,
     destination, offers, isSaving, isDeleting, isDisabled} = state;
-  const pointDestination = pointDestinations.getById(destination)
+  const pointDestination = pointDestinations
     ? pointDestinations.getById(destination)
     : null;
   const pictureItemsTemplate = pointDestinations
     .getById(destination)
     ?.pictures.map((picture) => getPicrtureItem(picture)).join('');
-
   const typeItemsTemplate = ROUTE_TYPE.map((typeItem) => getEventTypeItem(typeItem, state.type, isDisabled)).join('');
   const cityItemsTemplate = pointDestinations.get()
     .map((point) => point.name)

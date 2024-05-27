@@ -9,7 +9,7 @@ import FilterModel from './model/filter-model.js';
 
 import PointApiService from '../src/service/point-api-service.js';
 
-const AUTHORIZATION = 'Basic 09SVykjhUhHbMdik';
+const AUTHORIZATION = 'Basic 09SVykjhUhHbMdig';
 const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const bodyElement = document.querySelector('body');

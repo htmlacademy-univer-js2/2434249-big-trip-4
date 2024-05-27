@@ -2,7 +2,6 @@ import {render, replace, remove} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import EventPointView from '../view/event-point-view.js';
 import {MODE, UpdateType, UserAction} from '../const.js';
-import {isBigDifference} from '../utils.js';
 
 export default class PointPresenter {
   #point = null;
@@ -168,11 +167,9 @@ export default class PointPresenter {
   };
 
   #formSubmitHandler = (updatedPoint) => {
-    const isMinor = isBigDifference(updatedPoint, this.#point);
-
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      isMinor ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       updatedPoint
     );
 
