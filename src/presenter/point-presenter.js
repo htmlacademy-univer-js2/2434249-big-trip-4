@@ -1,7 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import EventPointView from '../view/event-point-view.js';
-import {MODE, UpdateType, UserAction} from '../mock/const.js';
+import {MODE, UpdateType, UserAction} from '../const.js';
 import {isBigDifference} from '../utils.js';
 
 export default class PointPresenter {
@@ -20,6 +20,7 @@ export default class PointPresenter {
     this.#eventList = eventList;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
@@ -75,6 +76,40 @@ export default class PointPresenter {
   destroy = () => {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
+  };
+
+  setSaving = () => {
+    if (this.#mode === MODE.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true
+      });
+    }
+  };
+
+  setDeleting = () => {
+    this.#pointEditComponent.updateElement({
+      isDeleting: true,
+      isDisabled: true,
+    });
+  };
+
+  setAborting = () => {
+    if (this.#mode === MODE.DEFAULT) {
+      this.#pointComponent.shake();
+    }
+
+    if (this.#mode === MODE.EDITING){
+      const resetFormState = () => {
+        this.#pointEditComponent.updateElement({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
+      };
+
+      this.#pointEditComponent.shake(resetFormState);
+    }
   };
 
   #replacePointToForm = () => {

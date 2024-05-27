@@ -1,8 +1,14 @@
 export default class DestinationModel {
   #destinations = null;
+  #service = null;
 
   constructor(service){
-    this.#destinations = service.getDestinations();
+    this.#service = service;
+  }
+
+  async init() {
+    this.#destinations = await this.#service.getDestinations();
+    return this.#destinations;
   }
 
   get() {
@@ -10,10 +16,10 @@ export default class DestinationModel {
   }
 
   getById(id) {
-    return this.#destinations.find((destinations) => destinations.id === id);
+    return this.get().find((destination) => destination.id === id);
   }
 
   getByName(name) {
-    return this.#destinations.find((destinations) => destinations.name === name);
+    return this.get().find((destination) => destination.name === name);
   }
 }

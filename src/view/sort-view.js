@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {SortType} from '../mock/const.js';
+import {SortType} from '../const.js';
 
 const createSortItemTemplate = (sorter, isChecked) => (`<div class="trip-sort__item  trip-sort__item--${sorter}">
   <input id="sort-${sorter}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorter}"

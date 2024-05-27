@@ -1,6 +1,6 @@
 import EditPointView from '../view/edit-point-view';
 import {RenderPosition, remove, render} from '../framework/render.js';
-import { UserAction, UpdateType, EditType } from '../mock/const';
+import { UserAction, UpdateType, EditType } from '../const.js';
 
 export default class NewPointPresenter {
   #container = null;

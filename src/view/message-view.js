@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import {FilterType} from '../mock/const.js';
+import {FilterType} from '../const.js';
 
 const FilterMassege = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
