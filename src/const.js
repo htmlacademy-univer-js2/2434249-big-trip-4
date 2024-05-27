@@ -6,11 +6,6 @@ export const SLASH_TIME_FOMAT = 'DD/MM/YY HH:mm';
 export const MILLISECONDS_IN_DAY = 86400000;
 export const MILLISECONDS_IN_HOUR = 3600000;
 
-export const BooleanValues = [
-  true,
-  false
-];
-
 export const MODE = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
@@ -40,10 +35,10 @@ export const ROUTE_TYPE = [
 ];
 
 export const FilterType = {
-  EVERYTHING: 'EVERYTHING',
-  FUTURE: 'FUTURE',
-  PRESENT: 'PRESENT',
-  PAST: 'PAST'
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past'
 };
 
 export const SortType = {
