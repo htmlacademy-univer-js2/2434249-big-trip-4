@@ -1,4 +1,4 @@
-import Odsersable from '../framework/observable.js';
+import Observable from '../framework/observable.js';
 // import {FilterType} from '../mock/const.js';
 
 export const FilterType = {
@@ -8,7 +8,7 @@ export const FilterType = {
   PAST: 'PAST'
 };
 
-export default class FilterModel extends Odsersable {
+export default class FilterModel extends Observable {
   #filter = FilterType.EVERYTHING;
 
   get() {

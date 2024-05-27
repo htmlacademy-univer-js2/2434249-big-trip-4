@@ -5,17 +5,27 @@ import DestinationModel from './model/destination-model.js';
 import OfferModel from './model/offers-model.js';
 import PointModel from './model/point-model.js';
 import FilterModel from './model/filter-model.js';
-import MockService from './service/mock-service.js';
 // import FilterPresenter from './presenter/filter-presenter.js';
+
+import PointApiService from '../src/service/point-api-service.js';
+
+const AUTHORIZATION = 'Basic 09SVykjhUhHbMdik';
+const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const bodyElement = document.querySelector('body');
 const tripInfoElement = bodyElement.querySelector('.trip-main');
 
-const mockService = new MockService();
-const destinationsModel = new DestinationModel(mockService);
-const pointsModel = new PointModel(mockService);
-const offersModel = new OfferModel(mockService);
 const filterModel = new FilterModel();
+
+
+const pointApiService = new PointApiService(END_POINT, AUTHORIZATION);
+const destinationsModel = new DestinationModel(pointApiService);
+const offersModel = new OfferModel(pointApiService);
+const pointsModel = new PointModel({
+  service: pointApiService,
+  destinationsModel,
+  offersModel
+});
 
 const newPointButtonPresenter = new NewPointButtonPresenter({
   container: tripInfoElement
@@ -40,5 +50,7 @@ newPointButtonPresenter.init({
   onButtonClick: boardPresenter.newPointButtonClickHandler
 });
 
-// filterPresenter.init();
+pointsModel.init();
 boardPresenter.init();
+
+
