@@ -17,9 +17,15 @@ export const POINT_EMPTY = {
   dateFrom: null,
   dateTo: null,
   destination: null,
-  ifFavorite: false,
-  offers: [],
-  type: 'Flight',
+  isFavorite: false,
+  offers: ['f6ddb8b3-e341-4f35-a213-0bcae36317fd',
+    'ad4f8e0c-6078-4976-8d74-dccbde695ab4',
+    '8420a013-28c9-47a8-85e7-1d430afc1580',
+    'e6f5e9f5-381a-45cd-b15f-780ebb99ba7f',
+    '7850ca85-fcd0-4aa5-aabe-ca5263bd34e2',
+    '0e07a8a3-b358-4310-a9f3-a035eaf13029'
+  ],
+  type: 'flight'
 };
 
 export const ROUTE_TYPE = [
