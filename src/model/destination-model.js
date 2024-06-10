@@ -7,8 +7,13 @@ export default class DestinationModel {
   }
 
   async init() {
-    this.#destinations = await this.#service.getDestinations();
-    return this.#destinations;
+    try {
+      this.#destinations = await this.#service.getDestinations();
+      return this.#destinations;
+    }
+    catch {
+      throw new Error('The list of destinations could not be loaded');
+    }
   }
 
   get() {

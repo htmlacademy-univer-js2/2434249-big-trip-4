@@ -7,11 +7,11 @@ import TripInfoView from '../view/trip-info-view.js';
 import {sortPointDay, sortPointPrice, sortPointTime} from '../utils.js';
 import {FilterType, SortType, UpdateType, UserAction, TimeLimit} from '../const.js';
 // import {FilterType} from '../model/filter-model.js';
-// import NewPointButtonPresenter from '../presenter/new-point-button-presenter.js';
 import NewPointPresenter from '../presenter/new-point-presenter.js';
 import MessageView from '../view/message-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import LoadingView from '../view/loading-view.js';
+import NoConnectionView from '../view/no-connection-view.js';
 
 export default class BoardPresenter {
   #tripContainer = null;
@@ -31,13 +31,13 @@ export default class BoardPresenter {
 
   #currentSortType = SortType.DAY;
   #currentFilteType = FilterType.EVERYTHING;
-  #sourcedTripPoints = [];
   #isCreating = false;
 
   #sortComponent = null;
   #tripInfoComponent = null;
   #filterComponent = null;
   #loadingComponent = new LoadingView();
+  #noConnectionComponent = new NoConnectionView();
   #pointsListComponent = new EventListView();
   #messageComponent = null;
   #uiBlocker = new UiBlocker({
@@ -83,7 +83,6 @@ export default class BoardPresenter {
     this.#tripFliterElement = this.#tripContainer.querySelector('.trip-controls__filters');
     this.#renderFilters();
     this.#renderLoading();
-    // this.#renderBoard();
   }
 
   newPointButtonClickHandler = () => {
@@ -217,12 +216,12 @@ export default class BoardPresenter {
         }
         break;
       case UserAction.CREATE_POINT:
-        this.#newPointPresenter.get(update.id).setSaving();
+        this.#newPointPresenter.setSaving();
         try {
           await this.#pointsModel.add(updateType, update);
         }
         catch {
-          this.#newPointPresenter.get(update.id).setAborting();
+          this.#newPointPresenter.setAborting();
         }
         break;
     }
@@ -237,6 +236,7 @@ export default class BoardPresenter {
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
+        this.#sortPoints(this.#currentSortType);
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
@@ -244,9 +244,15 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
       case UpdateType.INIT:
-        this.#isLoading = false;
-        remove(this.#loadingComponent);
-        this.#renderBoard();
+        if (data.isError) {
+          remove(this.#loadingComponent);
+          render(this.#noConnectionComponent, this.#tripEventsElement);
+        }
+        else {
+          this.#isLoading = false;
+          remove(this.#loadingComponent);
+          this.#renderBoard();
+        }
         break;
     }
   };
