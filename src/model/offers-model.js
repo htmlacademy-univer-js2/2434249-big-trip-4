@@ -7,8 +7,13 @@ export default class OfferModel {
   }
 
   async init() {
-    this.#offers = await this.#service.getOffers();
-    return this.#offers;
+    try {
+      this.#offers = await this.#service.getOffers();
+      return this.#offers;
+    }
+    catch {
+      throw new Error('The list of offers could not be loaded');
+    }
   }
 
   get() {

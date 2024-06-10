@@ -26,7 +26,6 @@ export default class PointPresenter {
 
   init(point){
     this.#point = point;
-
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
@@ -45,7 +44,6 @@ export default class PointPresenter {
       onSubmitClick: this.#formSubmitHandler,
       onDeleteClick:  this.#deleteClickHandler,
       onResetClick: this.#resetClickHandler,
-      onCancelClick: this.#cancelClickHandler
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -98,7 +96,7 @@ export default class PointPresenter {
       this.#pointComponent.shake();
     }
 
-    if (this.#mode === MODE.EDITING){
+    if (this.#mode === MODE.EDITING) {
       const resetFormState = () => {
         this.#pointEditComponent.updateElement({
           isDisabled: false,
@@ -125,14 +123,6 @@ export default class PointPresenter {
   };
 
   #deleteClickHandler = (point) => {
-    this.#handleDataChange(
-      UserAction.DELETE_POINT,
-      UpdateType.MINOR,
-      point
-    );
-  };
-
-  #cancelClickHandler = (point) => {
     this.#handleDataChange(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
@@ -172,7 +162,5 @@ export default class PointPresenter {
       UpdateType.MINOR,
       updatedPoint
     );
-
-    this.#replaceFormToPoint();
   };
 }

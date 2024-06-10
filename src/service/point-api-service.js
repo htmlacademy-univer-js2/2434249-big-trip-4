@@ -2,6 +2,7 @@ import ApiService from '../framework/api-service.js';
 
 const Method = {
   GET: 'GET',
+  POST: 'POST',
   PUT: 'PUT',
   DELETE: 'DELETE'
 };
