@@ -132,7 +132,6 @@ export default class EditPointView extends AbstractStatefulView{
   #pointOffers = [];
   #datepickerFrom = null;
   #datepickerTo = null;
-  // #handleNewSubmitClick = null;
   #handleSubmitClick = null;
   #handleDeleteClick = null;
   #handleResetClick = null;
@@ -149,7 +148,6 @@ export default class EditPointView extends AbstractStatefulView{
     this.#pointOffers = pointOffers.getByType(point.type);
 
     this.#handleSubmitClick = onSubmitClick;
-    // this.#handleNewSubmitClick = onNewSubmitClick;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleResetClick = onResetClick;
     this.#handleCancelClick = onCancelClick;
@@ -173,13 +171,11 @@ export default class EditPointView extends AbstractStatefulView{
 
   _restoreHandlers() {
     if (this.#type === EditType.EDITING) {
-      // this.element.querySelector('form').addEventListener('submit', this.#submitClickHandler);
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpClickHandler);
       this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
     }
 
     if (this.#type === EditType.CREATING) {
-      // this.element.querySelector('form').addEventListener('submit', this.#newSubmitClickHandler);
       this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
     }
 
@@ -251,12 +247,6 @@ export default class EditPointView extends AbstractStatefulView{
       }
     );
   };
-
-  // #newSubmitClickHandler = (evt) => {
-  //   evt.preventDefault();
-  //   console.log(EditPointView.parseStateToPoint(this._state));
-  //   this.#handleNewSubmitClick(EditPointView.parseStateToPoint(this._state));
-  // };
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();

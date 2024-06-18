@@ -5,11 +5,10 @@ import DestinationModel from './model/destination-model.js';
 import OfferModel from './model/offers-model.js';
 import PointModel from './model/point-model.js';
 import FilterModel from './model/filter-model.js';
-// import FilterPresenter from './presenter/filter-presenter.js';
 
 import PointApiService from '../src/service/point-api-service.js';
 
-const AUTHORIZATION = 'Basic 09SVykjhUhHbMdigAaa';
+const AUTHORIZATION = 'Basic 09SVykjhUhHbMdigAaasa';
 const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const bodyElement = document.querySelector('body');
@@ -30,12 +29,6 @@ const pointsModel = new PointModel({
 const newPointButtonPresenter = new NewPointButtonPresenter({
   container: tripInfoElement
 });
-
-// const filterPresenter = new FilterPresenter({
-//   container: bodyElement.querySelector('.trip-control__filters'),
-//   pointsModel,
-//   filterModel
-// });
 
 const boardPresenter = new BoardPresenter({
   tripContainer: bodyElement,

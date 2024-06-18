@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {DAY_FOMAT, DATE_FORMAT, TIME_FORMAT,
   FULL_TIME_FOMAT, MILLISECONDS_IN_DAY, MILLISECONDS_IN_HOUR,
-  SLASH_TIME_FOMAT, FilterType} from './const';
+  SLASH_TIME_FOMAT, FilterType, SortType} from './const';
 
 // eslint-disable-next-line no-undef
 const duration = require('dayjs/plugin/duration');
@@ -54,13 +54,6 @@ export const isBigDifference = (pointA, pointB) =>
   || pointA.basePrice !== pointB.basePrice
   || dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom)) !== dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
 
-export const filter = {
-  [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
-  [FilterType.FUTURE]:(points) => points.filter((point) => !ispointExpired(point.dateFrom) && !ispointExpired(point.dateTo)),
-  [FilterType.PRESENT]:(points) => points.filter((point) => ispointExpired(point.dateFrom) && !ispointExpired(point.dateTo)),
-  [FilterType.PAST]: (points) => points.filter((point) => ispointExpired(point.dateFrom) && ispointExpired(point.dateTo))
-};
-
 export const adaptToClient = (point) => {
   const adaptedPoint = {
     ...point,
@@ -93,4 +86,23 @@ export const adaptToServer = (point) => {
   delete adaptedPoint.isFavorite;
 
   return adaptedPoint;
+};
+
+export const filterByFuture = (event) => dayjs().isBefore(event.dateFrom);
+
+export const filterByPresent = (event) => dayjs().isAfter(event.dateFrom) && dayjs().isBefore(event.dateTo);
+
+export const filterByPast = (event) => dayjs().isAfter(event.dateTo);
+
+export const filter = {
+  [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
+  [FilterType.FUTURE]: (points) => points.filter((point) => filterByFuture(point)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => filterByPresent(point)),
+  [FilterType.PAST]: (points) => points.filter((point) => filterByPast(point)),
+};
+
+export const sort = {
+  [SortType.DAY]: (array) => array.sort(sortPointDay),
+  [SortType.TIME]: (array) => array.sort(sortPointTime),
+  [SortType.PRICE]: (array) => array.sort(sortPointPrice)
 };

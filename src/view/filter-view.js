@@ -1,35 +1,51 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../const.js';
 
-const createFilterItems = (filter, flag) => (`<div class="trip-filters__filter">
-  <input id="filter-${filter.toLowerCase()}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter.toLowerCase()}"
-  ${flag === 0 ? 'checked' : ''}>
-  <label class="trip-filters__filter-label" for="filter-${filter.toLowerCase()}">${filter}</label>
-</div>`);
+const createFiltersElements = (currentFilterType) => {
+  let result = '';
 
-const createFilterTemplate = (filters) => (`<form class="trip-filters" action="#" method="get">
-      ${filters.map((filter, index) => createFilterItems(filter, index)).join('')}
-      <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`);
+  Object.values(FilterType).forEach((filter) => {
+    const checked = filter === currentFilterType ? 'checked' : '';
+    const lowerCaseFilterName = filter.toLowerCase();
 
-export default class FilterView extends AbstractView{
-  #filters = null;
-  #handleFilterTypeChange = null;
+    result += `<div class="trip-filters__filter">
+        <input id="filter-${lowerCaseFilterName}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
+        value="${lowerCaseFilterName}" ${checked}>
+        <label class="trip-filters__filter-label" for="filter-${lowerCaseFilterName}">${filter}</label>
+        </div>`;
+  });
 
-  constructor({filters, onFilterTypeChange}) {
+  return result;
+};
+
+const createFiltersTemplate = (currentFilterType) => `
+<form class="trip-filters" action="#" method="get">
+  ${createFiltersElements(currentFilterType)}
+  <button class="visually-hidden" type="submit">Accept filter</button>
+</form>`;
+
+export default class FiltersView extends AbstractView{
+  #currentFilter = null;
+  #filterTypeHandler = null;
+
+  constructor(currentFilterType, filterTypeHandler) {
     super();
-    this.#filters = Object.values(filters);
-    this.#handleFilterTypeChange = onFilterTypeChange;
 
-    this.element.querySelectorAll('.trip-filters__filter')
-      .forEach((filterElement) => filterElement.addEventListener('click', this.#filterClickHandler));
+    this.#currentFilter = currentFilterType;
+    this.#filterTypeHandler = filterTypeHandler;
+    this.element.addEventListener('change', this.#onFilterTypeChange);
   }
 
-  get template() {
-    return createFilterTemplate(this.#filters);
+  get template(){
+    return createFiltersTemplate(this.#currentFilter);
   }
 
-  #filterClickHandler = (evt) => {
-    // evt.preventDefault();
-    this.#handleFilterTypeChange(evt.target.innerHTML);
+  #onFilterTypeChange = (evt) => {
+    const value = evt.target.value.charAt(0).toUpperCase() + evt.target.value.slice(1);
+    if (this.#currentFilter === value) {
+      return;
+    }
+    this.#currentFilter = value;
+    this.#filterTypeHandler(value);
   };
 }
