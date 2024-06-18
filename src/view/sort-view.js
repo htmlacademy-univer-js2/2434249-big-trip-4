@@ -3,7 +3,7 @@ import {SortType} from '../const.js';
 
 const createSortItemTemplate = (sorter, isChecked) => (`<div class="trip-sort__item  trip-sort__item--${sorter}">
   <input id="sort-${sorter}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sorter}"
-  data-sort-type="${SortType}"
+  data-sort-type="${sorter}"
   ${isChecked ? 'checked' : ''}
   ${sorter === 'event' || sorter === 'offers' ? 'disabled' : ''}>
   <label class="trip-sort__btn" for="sort-${sorter}"
@@ -23,7 +23,7 @@ export default class SortView extends AbstractView {
     super();
     this.#handleSortTypeChange = onSortTypeChange;
 
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+    this.element.addEventListener('change', this.#sortTypeChangeHandler);
   }
 
   get template() {
@@ -31,7 +31,7 @@ export default class SortView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    if(evt.target.tagName !== 'LABEL') {
+    if(evt.target.tagName !== 'INPUT') {
       return;
     }
 

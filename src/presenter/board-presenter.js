@@ -2,11 +2,11 @@ import {render, remove, RenderPosition} from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
-import FilterView from '../view/filter-view.js';
 import TripInfoView from '../view/trip-info-view.js';
 import {sortPointDay, sortPointPrice, sortPointTime} from '../utils.js';
 import {FilterType, SortType, UpdateType, UserAction, TimeLimit} from '../const.js';
-// import {FilterType} from '../model/filter-model.js';
+import FilterPresenter from '../presenter/filter-presenter.js';
+import { filter, sort} from '../utils.js';
 import NewPointPresenter from '../presenter/new-point-presenter.js';
 import MessageView from '../view/message-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -30,12 +30,11 @@ export default class BoardPresenter {
   #newPointButtonPresenter = null;
 
   #currentSortType = SortType.DAY;
-  #currentFilteType = FilterType.EVERYTHING;
   #isCreating = false;
 
   #sortComponent = null;
   #tripInfoComponent = null;
-  #filterComponent = null;
+  #filterPresenter = null;
   #loadingComponent = new LoadingView();
   #noConnectionComponent = new NoConnectionView();
   #pointsListComponent = new EventListView();
@@ -71,10 +70,8 @@ export default class BoardPresenter {
   }
 
   get points() {
-    const points = this.#pointsModel.points;
-    // const filteredPoints = filter[this.#currentFilteType](points);
-    // return filteredPoints.sort(sortPointDay);
-    return points;
+    const filteredPoints = filter[this.#filterModel.get()](this.#pointsModel.points);
+    return sort[this.#currentSortType](filteredPoints);
   }
 
   init(){
@@ -90,6 +87,10 @@ export default class BoardPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointButtonPresenter.disableButton();
+
+    if (this.#messageComponent) {
+      remove(this.#messageComponent);
+    }
     this.#newPointPresenter.init();
   };
 
@@ -107,8 +108,6 @@ export default class BoardPresenter {
   };
 
   #renderPoints = () => {
-    render(this.#pointsListComponent, this.#tripEventsElement);
-
     this.points.forEach((point) => {
       this.#renderPoint(point);
     });
@@ -128,6 +127,15 @@ export default class BoardPresenter {
     render(this.#sortComponent, this.#tripEventsElement);
   };
 
+  #renderFilters = () => {
+    this.#filterPresenter = new FilterPresenter(
+      this.#tripFliterElement,
+      this.#filterModel
+    );
+
+    this.#filterPresenter .init();
+  };
+
   #renderMessage = () => {
     this.#messageComponent = new MessageView({
       filterType: this.#filterModel.get()
@@ -140,17 +148,8 @@ export default class BoardPresenter {
     render(this.#loadingComponent, this.#tripEventsElement);
   };
 
-  #renderFilters = () => {
-    this.#filterComponent = new FilterView({
-      filters: FilterType,
-      onFilterTypeChange: this.#filterTypeChangeHandler
-    });
-
-    render(this.#filterComponent, this.#tripFliterElement);
-  };
-
   #renderPointsList = () => {
-    render(this.#pointsListComponent, this.#tripEventsElement);
+    render(this.#pointsListComponent, this.#tripEventsElement, RenderPosition.AFTEREND);
   };
 
   #renderTripInfo = () => {
@@ -162,23 +161,26 @@ export default class BoardPresenter {
     });
 
     if (this.#tripInfoComponent.element !== null)
-    {render(this.#tripInfoComponent, this.#tripInfoElement, RenderPosition.AFTERBEGIN);}
+    {
+      render(this.#tripInfoComponent, this.#tripInfoElement, RenderPosition.AFTERBEGIN);
+    }
   };
 
   #renderBoard = () => {
-    if (this.points.length === 0 && !this.#isLoading) {
+    if (this.points.length === 0 && !this.#isCreating) {
       this.#renderMessage();
       return;
+    }
+    else {
+      this.#renderPointsList();
     }
 
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
-
     this.#renderTripInfo();
     this.#renderSort();
-    this.#renderPointsList();
     this.#renderPoints();
   };
 
@@ -257,16 +259,6 @@ export default class BoardPresenter {
     }
   };
 
-  #filterTypeChangeHandler = (filterType) => {
-    if (this.#currentFilteType === filterType) {
-      return;
-    }
-
-    // this.#filterPoints(filterType);
-    this.#clearPoints();
-    this.#renderPoints();
-  };
-
   #sortTypeChangeHandler = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
@@ -281,12 +273,8 @@ export default class BoardPresenter {
     this.#newPointPresenter.destroy();
   };
 
-  // #filterPoints = (filterType) => {
-  //   filter[filterType](this.#pointsModel.points);
-  //   console.log(filter[filterType](this.#pointsModel.points));
-  // };
-
   #sortPoints = (sortType) => {
+    this.#currentSortType = sortType;
     switch (sortType) {
       case SortType.PRICE:
         this.points.sort(sortPointPrice);
@@ -297,8 +285,6 @@ export default class BoardPresenter {
       default:
         this.points.sort(sortPointDay);
     }
-
-    this.#currentSortType = sortType;
   };
 
   #newPointDestroyHandler = ({isCanceled}) => {

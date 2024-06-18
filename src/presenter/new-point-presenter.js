@@ -45,13 +45,6 @@ export default class NewPointPresenter {
     }
   };
 
-  // setDeleting = () => {
-  //   this.#pointNewComponent.updateElement({
-  //     isDeleting: true,
-  //     isDisabled: true,
-  //   });
-  // };
-
   setAborting = () => {
     if (this.#mode === MODE.DEFAULT) {
       this.#pointNewComponent.shake();
@@ -88,8 +81,6 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       point,
     );
-
-    // this.destroy({isCanceled: false});
   };
 
   #resetClickHandler = () => {
