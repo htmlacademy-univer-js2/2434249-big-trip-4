@@ -3,10 +3,9 @@ import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
 import TripInfoView from '../view/trip-info-view.js';
-import {sortPointDay, sortPointPrice, sortPointTime} from '../utils.js';
+import {sortPointDay, sortPointPrice, sortPointTime, filter, sort} from '../utils.js';
 import {FilterType, SortType, UpdateType, UserAction, TimeLimit} from '../const.js';
 import FilterPresenter from '../presenter/filter-presenter.js';
-import { filter, sort} from '../utils.js';
 import NewPointPresenter from '../presenter/new-point-presenter.js';
 import MessageView from '../view/message-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -30,7 +29,6 @@ export default class BoardPresenter {
   #newPointButtonPresenter = null;
 
   #currentSortType = SortType.DAY;
-  #isCreating = false;
 
   #sortComponent = null;
   #tripInfoComponent = null;
@@ -44,6 +42,7 @@ export default class BoardPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
+  #isCreating = false;
   #isLoading = false;
 
   constructor({tripContainer, destinationsModel,
@@ -130,10 +129,10 @@ export default class BoardPresenter {
   #renderFilters = () => {
     this.#filterPresenter = new FilterPresenter(
       this.#tripFliterElement,
-      this.#filterModel
+      this.#filterModel,
     );
 
-    this.#filterPresenter .init();
+    this.#filterPresenter.init();
   };
 
   #renderMessage = () => {
@@ -179,7 +178,9 @@ export default class BoardPresenter {
       this.#renderLoading();
       return;
     }
-    this.#renderTripInfo();
+    if (this.points.length) {
+      this.#renderTripInfo();
+    }
     this.#renderSort();
     this.#renderPoints();
   };
@@ -189,6 +190,7 @@ export default class BoardPresenter {
     remove(this.#messageComponent);
     remove(this.#sortComponent);
     remove(this.#tripInfoComponent);
+
     this.#sortComponent = null;
 
     if (resetSortType) {
